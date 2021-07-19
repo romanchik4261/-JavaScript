@@ -5,9 +5,9 @@ let b = 5;
 
 if (a > 0 && b > 0) {
     alert(a - b);
-}    else if(a < 0 && b < 0) {
+}    else {
         alert(a * b);
-    } else if (a < 0 && b > 0) {
+    } if (a < 0 && b > 0) {
         alert(a + b);
     }
 
@@ -72,13 +72,9 @@ function multiplication(a, b) {
 function mathOperation(arg1, arg2, operation) {
    switch(operation()) {
        case operation: return(addition(a, b));
-       brake;
        case operation: return(subtraction(a, b));
-       brake;
        case operation: return(division(a, b));
-       brake;
        case operation: return(multiplication(a, b));
-       brake;
    }
    return operation;
 }
