@@ -48,3 +48,8 @@ let number = 0;
     }, 0);
     
     alert("Итого в корзине " + cart.length + " товаров на сумму " + result + " рублей.");
+
+// 3 задание
+for (let i = 0; i < 9; alert(i++)) {
+
+    }
