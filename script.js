@@ -3,50 +3,48 @@
 let a = -2;
 let b = 5;
 
-if (a > 0 && b > 0) {
+if (a >= 0 && b >= 0) {
     alert(a - b);
-}    else {
+}    else if (a < 0 && b < 0){
         alert(a * b);
-    } if (a < 0 && b > 0) {
+} else {
         alert(a + b);
     }
 
-// 4 задание    
-let number = 1;
-let numbermax = 16;
+// 4 задание   
+let number = +prompt('Введите число от 1 до 15');
 switch (number) {
-    case number || number != numbermax:
-    alert(number + 1);
-    case number + 1 || number != numbermax:
-    alert(number + 2);
-    case number + 2 || number != numbermax:
-    alert(number + 3);
-    case number + 3 || number != numbermax:
-    alert(number + 4);
-    case number + 4 || number != numbermax:
-    alert(number + 5);
-    case number + 5 || number != numbermax:
-    alert(number + 6);
-    case number + 6 || number != numbermax:
-    alert(number + 7);
-    case number + 7 || number != numbermax:
-    alert(number + 8);
-    case number + 8 || number != numbermax:
-    alert(number + 9);
-    case number + 9 || number != numbermax:
-    alert(number + 10);
-    case number + 10 || number != numbermax:
-    alert(number + 11);
-    case number + 11 || number != numbermax:
-    alert(number + 12);
-    case number + 12 || number != numbermax:
-    alert(number + 13);
-    case number + 13 || number != numbermax:
-    alert(number + 14);
-    default:
-        alert("Максимальное значение достигнуто");
+  case 1:
+    alert(number++);
+  case 2:
+    alert(number++);
+  case 3:
+    alert(number++);
+  case 4:
+    alert(number++);
+  case 5:
+    alert(number++);
+  case 6:
+    alert(number++);
+  case 7:
+    alert(number++);
+  case 8:
+    alert(number++);
+  case 9:
+    alert(number++);
+  case 10:
+    alert(number++);
+  case 11:
+    alert(number++);
+  case 12:
+    alert(number++);
+  case 13:
+    alert(number++);
+  case 14:
+    alert(number++);
+  case 15:
+    alert(number);
 }
-
 //5,6 задание
 
 function addition(a, b) {
@@ -69,12 +67,12 @@ function multiplication(a, b) {
     return c;
 }
 
-function mathOperation(arg1, arg2, operation) {
-   switch(operation()) {
-       case operation: return(addition(a, b));
-       case operation: return(subtraction(a, b));
-       case operation: return(division(a, b));
-       case operation: return(multiplication(a, b));
+function mathOperation(a, b, operation) {
+   switch(operation) {
+       case addition: return addition(a, b);
+       case subtraction: return subtraction(a, b);
+       case division: return division(a, b);
+       case multiplication: return multiplication(a, b);
    }
    return operation;
 }
