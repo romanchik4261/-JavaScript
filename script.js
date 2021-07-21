@@ -1,3 +1,4 @@
+Lesson3
 //1 задание
 let number = 0;
   while (number < 100) {
