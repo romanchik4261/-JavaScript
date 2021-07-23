@@ -17,3 +17,50 @@ function numToObject() {
 }
 
 console.log(numToObject());
+
+//2 задание
+
+const basket = {
+
+    goods: [
+        {
+            idProduct: 111,
+            productName: "Платье",
+            price: 2000,
+            amount: 2
+        },
+        {
+            idProduct: 222,
+            productName: "Юбка",
+            price: 1500,
+            amount: 2
+        },
+        {
+            idProduct: 333,
+            productName: "Футболка",
+            price: 500,
+            amount: 2
+        },
+        {
+            idProduct: 444,
+            productName: "Штаны",
+            price: 2000,
+            amount: 2
+        },
+        {
+            idProduct: 555,
+            productName: "Жакет",
+            price: 1500,
+            amount: 2
+        }
+    ],
+
+    basketPrice() {
+        return this.goods.reduce(function(sum, current) {
+                return sum + current.price * current.amount;
+              }, 0);
+    },
+
+};
+
+alert("В корзине товаров на сумму " + basket.basketPrice());
