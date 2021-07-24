@@ -63,4 +63,36 @@ const basket = {
 
 };
 
-alert("В корзине товаров на сумму " + basket.basketPrice());
+let count = basket.goods.length;
+
+alert("В корзине " + count + " товаров " + " на сумму " +  basket.basketPrice());
+
+//3 задание
+
+const catalog = {
+    
+    men: [
+            {clothes: {"Джинсы": {
+                    price: 2000,
+                    idProduct: 111,
+                    color: ['белый','черный','синий']
+                    },
+                    "Футболка": {},
+                    "Куртка": {}
+                    }
+            },
+            {shoes: {}
+            },
+            {accesories: {}
+            }
+        ],
+
+    women: [
+        {clothes: {}
+    },
+        {shoes: {}
+    },
+        {accesories: {}
+    }
+],
+}
