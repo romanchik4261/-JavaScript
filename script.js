@@ -54,8 +54,22 @@
 
 //2 задание
 
+const cart = {
+    generate(product) {
+        return `<div class = "good">
+        <div>Наименование: $(product.product_name)</div>
+        <div>Цена</div>
+        <div>Количество</div>
+        <div>Стоимость</div>
+        
+        </div>`
+    }
+}
+
 const basket = {
-    element: document.createElement('div'),
+    basketProduct: null,
+    basketButton: null,
+    cart,
 
     goods: [
         {
@@ -91,9 +105,28 @@ const basket = {
     ],
 
 
-    create() {
-        const div = document.createElement('div');
-        this.element.appendChild(div);
+    init() {
+        this.basketProduct = document.querySelector('basket');
+        this.basketButton = document.querySelector('basket_btn');
+        this.basketButton.addEventListener('click', this.clearbasket.bind(this)); //Запускаем событие очищения корзины
+
+        this.generate();
+    },
+
+    clearbasket() {
+        this.goods = [];
+        this.generate();
+    },
+
+    generate() {
+        if (this.goods.length) {
+            this.goods.forEach(product => {
+                this.basketProduct.insertAdjacentHTML('beforeend', this.cart.render(product));
+            });
+            this.basketProduct.insertAdjacentHTML('beforeend', `В корзине ${this.goods.length} товаров на сумму ${this.BasketPrice()}`);
+        } else {
+            this.basketProduct.textContent = 'Корзина пуста';
+        }
     },
 
     basketPrice() {
@@ -103,8 +136,13 @@ const basket = {
     },
 
 
-};
+}
 
-alert("В корзине товаров на сумму " + basket.basketPrice());
+
+
+
+
+// let count = basket.goods.length;
+// alert("В корзине " + count + " товаров " + " на сумму " +  basket.basketPrice());
 
 
