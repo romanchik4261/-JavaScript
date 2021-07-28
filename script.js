@@ -1,14 +1,15 @@
 'use strict'
 
-// // // 1 задание
+// 1 задание
 // // Первый вариант
 // const board = {
 //     rowCount: 8,
 //     colCount: 8,
-//     containerElement: '',
+//     containerElement: document.getElementById('game'),
 //     cellElement: [],
 
 //     initCells() {
+//         // this.containerElement.innerHTML = ' ';
 //         this.cellElement = [];
     
 //         for (let row = 0; row < this.rowCount; row++) {
@@ -57,14 +58,14 @@
 const cart = {
     generate(product) {
         return `<div class = "good">
-        <div>Наименование: $(product.product_name)</div>
-        <div>Цена</div>
-        <div>Количество</div>
-        <div>Стоимость</div>
-        
+        <div>Наименование: ${product.product_name}</div>
+        <div>Цена: ${product.price}</div>
+        <div>Количество: ${product.amount}</div>
+        <div>Стоимость: ${product.price * product.amount}</div>
         </div>`
     }
 }
+
 
 const basket = {
     basketProduct: null,
@@ -106,14 +107,14 @@ const basket = {
 
 
     init() {
-        this.basketProduct = document.querySelector('basket');
-        this.basketButton = document.querySelector('basket_btn');
-        this.basketButton.addEventListener('click', this.clearbasket.bind(this)); //Запускаем событие очищения корзины
+        this.basketProduct = document.querySelector('.basket');
+        this.basketButton = document.querySelector('.basket_btn');
+        this.basketButton.addEventListener('click', this.clearbasket.bind(this)); //Событие очищения корзины
 
         this.generate();
     },
 
-    clearbasket() {
+    clearbasket() { //Очищение
         this.goods = [];
         this.generate();
     },
@@ -134,9 +135,8 @@ const basket = {
                 return sum + current.price * current.amount;
               }, 0);
     },
-
-
-}
+};
+basket.init();
 
 
 
