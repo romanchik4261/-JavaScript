@@ -1,64 +1,59 @@
 'use strict'
 
 // 1 задание
-// // Первый вариант
+// Первый вариант
 // const board = {
-//     rowCount: 8,
-//     colCount: 8,
+    
 //     containerElement: document.getElementById('game'),
 //     cellElement: [],
 
 //     initCells() {
-//         // this.containerElement.innerHTML = ' ';
+//         this.containerElement.innerHTML = ' ';
 //         this.cellElement = [];
+
+//         const rowCount = [0, 8, 7, 6, 5, 4, 3, 2, 1, 0];
+//         const colCount = [0,'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',0];
     
-//         for (let row = 0; row < this.rowCount; row++) {
-//             const trElem = document.createElement('tr');
-//             this.containerElement.appendChild(trElem);
+//         for (let row = 0; row < rowCount.length; row++) {
+//             const tr = document.createElement('tr');
+//             this.containerElement.appendChild(tr);
 
-//             for (let col = 0; col < this.colCount; col++) {
+//             for (let col = 0; col < colCount.length; col++) {
 //                 const td = document.createElement('td');
-//                 trElem.appendChild(td);
+//                 tr.appendChild(td);
 
-//                 this.cellElements.push(td);
+//                 this.cellElement.push(td);
+
+//             if (rowCount[row] === 0 && colCount[col] !== 0) {
+//                 td.innerHTML = colCount[col];
+//             } else if (colCount[col] === 0 && rowCount[row] !== 0) {
+//                 td.innerHTML = rowCount[row].toString();
+//             }
+//             if (this.cellBlack(row, col)) {
+//                 td.style.background = 'grey';
+//             }
+
 //             }
 //         }
-//     }
+//     },
 
-// }
+//     cellBlack(rowNum, colNum) {
+//         if (rowNum === 0 || colNum === 0 || rowNum === 9 || colNum === 9) {
+//             return false;
+//         }
+//         return (rowNum % 2 === 1 && colNum % 2 === 0) || (rowNum % 2 === 0 && colNum % 2 === 1);
+//     },
+
+// };
 
 // board.initCells()
 
-// // Второй вариант
-
-// const desk = {
-//     create: document.getElementById('game'),
-
-//     createDesk() {
-//         for (let i = 1; i < 9; i++) {
-//             let tr = document.createElement('tr');
-//             for (let j = 1; j < 9; j++) {
-//                 let td = document.createElement('td');
-//                 if (i%2 == j%2) {
-//                     td.className = "white";
-//                 } else {
-//                     td.className = "black";
-//                 }
-//                 tr.appendChild(td);
-//             }
-//             this.create.appendChild(tr);
-//         }
-//     }
-// }
-//  desk.createDesk();
-
-
-//2 задание
+// //2 задание
 
 const cart = {
     generate(product) {
         return `<div class = "good">
-        <div>Наименование: ${product.product_name}</div>
+        <div>Наименование: ${product.productName}</div>
         <div>Цена: ${product.price}</div>
         <div>Количество: ${product.amount}</div>
         <div>Стоимость: ${product.price * product.amount}</div>
@@ -123,9 +118,9 @@ const basket = {
     generate() {
         if (this.goods.length) {
             this.goods.forEach(product => {
-                this.basketProduct.insertAdjacentHTML('beforeend', this.cart.render(product));
+                this.basketProduct.insertAdjacentHTML('beforeend', this.cart.generate(product));
             });
-            this.basketProduct.insertAdjacentHTML('beforeend', `В корзине ${this.goods.length} товаров на сумму ${this.BasketPrice()}`);
+            this.basketProduct.insertAdjacentHTML('beforeend', `В корзине ${this.goods.length} товаров на сумму ${this.basketPrice()}`);
         } else {
             this.basketProduct.textContent = 'Корзина пуста';
         }
@@ -136,6 +131,7 @@ const basket = {
                 return sum + current.price * current.amount;
               }, 0);
     },
+
 };
 basket.init();
 
