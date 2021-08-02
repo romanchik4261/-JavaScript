@@ -1,26 +1,21 @@
-"use strict";
-//1 задание
+"use strict"
 
-function numToObject() {
-    
-    const num = parseInt(prompt("Введите число от 0 до 999"));
-    if (num >= 1000 || num < 0 || !Number.isInteger(num)) {
-        console.log("Значение должно быть числом больше 0 и не больше 999. Попробуй ещё раз.");
-        return {};
-    } 
-    
-    return {
-        units: parseInt(num % 10),
-        dozens: parseInt((num % 100)/10),
-        hundreds: parseInt((num % 1000)/100)
+const cart = {
+    generate(product) {
+        return `<div class = "good">
+        <div>Наименование: ${product.productName}</div>
+        <div>Цена: ${product.price}</div>
+        <div>Количество: ${product.amount}</div>
+        <div>Стоимость: ${product.price * product.amount}</div>
+        </div>`
     }
 }
 
-console.log(numToObject());
-
-//2 задание
 
 const basket = {
+    basketProduct: null,
+    basketButton: null,
+    cart,
 
     goods: [
         {
@@ -55,6 +50,32 @@ const basket = {
         }
     ],
 
+
+    init() {
+        this.basketProduct = document.querySelector('.basket');
+        this.basketButton = document.querySelector('.basket_btn');
+        this.basketButton.addEventListener('click', () => this.clearbasket);
+        //Событие очищения корзины
+
+        this.generate();
+    },
+
+    clearbasket() { //Очищение
+        this.goods = [];
+        this.generate();
+    },
+
+    generate() {
+        if (this.goods.length) {
+            this.goods.forEach(product => {
+                this.basketProduct.insertAdjacentHTML('beforeend', this.cart.generate(product));
+            });
+            this.basketProduct.insertAdjacentHTML('beforeend', `В корзине ${this.goods.length} товаров на сумму ${this.basketPrice()}`);
+        } else {
+            this.basketProduct.textContent = 'Корзина пуста';
+        }
+    },
+
     basketPrice() {
         return this.goods.reduce(function(sum, current) {
                 return sum + current.price * current.amount;
@@ -62,37 +83,4 @@ const basket = {
     },
 
 };
-
-let count = basket.goods.length;
-
-alert("В корзине " + count + " товаров " + " на сумму " +  basket.basketPrice());
-
-//3 задание
-
-const catalog = {
-    
-    men: [
-            {clothes: {"Джинсы": {
-                    price: 2000,
-                    idProduct: 111,
-                    color: ['белый','черный','синий']
-                    },
-                    "Футболка": {},
-                    "Куртка": {}
-                    }
-            },
-            {shoes: {}
-            },
-            {accesories: {}
-            }
-        ],
-
-    women: [
-        {clothes: {}
-    },
-        {shoes: {}
-    },
-        {accesories: {}
-    }
-],
-}
+basket.init();
