@@ -2,21 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        #game td {
-            width: 30px;
-            height: 30px;
-            border: 1px solid black;
-        }
-    </style>
+    <title>Змейка</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+<div id="game-wrap">
     <table id="game"></table>
-    <div class="basket"></div>
-    <button class="basket_btn">Очистить корзину</button>
-    <script src="script.js"></script>
+</div>
+<div id="menu">
+    <div id="playButton" class="menuButton">Старт</div>
+    <div id="newGameButton" class="menuButton">Новая игра</div>
+</div>
+<div id="register">Счетчик:</div>
+
+<script src="script.js"></script>
 </body>
 </html>

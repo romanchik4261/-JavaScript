@@ -207,12 +207,39 @@ const status = {
   },
 };
 
+// домашка
+
+const register = {
+    count: null,
+    registerCounts: null,
+
+    init() {
+        this.registerCounts = document.getElementById('register');
+        this.drop();
+    },
+
+    drop() { //обнуляем счетчик
+        this.count = 0;
+        this.points();
+    },
+
+    points() { //количество очков
+        this.registerCounts.textContent = this.count;
+    },
+
+    increment() {
+        this.count++;
+        this.points();
+    },
+};
+
 const game = {
   config,
   map,
   snake,
   food,
   status,
+  register,
   tickInterval: null,
 
   init(userSettings = {}) {
@@ -227,6 +254,7 @@ const game = {
     }
 
     this.map.init(this.config.getRowsCount(), this.config.getColsCount());
+    this.register.init();
     this.setEventHandlers();
     this.reset();
   },
@@ -286,6 +314,7 @@ const game = {
 
   reset() {
     this.stop();
+    this.register.drop();
     this.snake.init(this.getStartSnakeBody(), 'up');
     this.food.setCoordinates(this.getRandomFreeCoordinates());
     this.render()
@@ -337,6 +366,7 @@ const game = {
     if (!this.canMakeStep()) return this.finish();
     if (this.food.isOnPoint(this.snake.getNextStepHeadPoint())) {
       this.snake.growUp();
+      this.register.increment();
       this.food.setCoordinates(this.getRandomFreeCoordinates());
 
       if (this.isGameWon()) this.finish();
@@ -372,6 +402,12 @@ const game = {
   render() {
     this.map.render(this.snake.getBody(), this.food.getCoordinates());
   },
+  
 };
 
+
+
 game.init();
+
+// Для генерации препятствий использовать getRandomFreeCoordinates()  нужно его расширить. Метод генерирующий рандомную свободную точку с координатами. Добавить в исключения координаты препятствий
+// Объект food на основе которого можно создать обект препятствия
