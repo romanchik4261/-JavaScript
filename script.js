@@ -54,7 +54,7 @@ const basket = {
     init() {
         this.basketProduct = document.querySelector('.basket');
         this.basketButton = document.querySelector('.basket_btn');
-        this.basketButton.addEventListener('click', () => this.clearbasket);
+        this.basketButton.addEventListener('click', this.clearbasket.bind(this));
         //Событие очищения корзины
 
         this.generate();
