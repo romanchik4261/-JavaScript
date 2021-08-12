@@ -105,6 +105,8 @@ const basket = {
 
         this.addEvent();
         this.generate();
+
+        //generatePrice();
     },
 
     addEvent() { //Событие на кнопке
@@ -154,7 +156,8 @@ const basket = {
                 this.goods.push({...product, amount: 1});
             }
             this.generate();
-        } else {
+        } 
+        else {
             alert('Ошибка добавления!');
         }
     },
@@ -162,7 +165,8 @@ const basket = {
 catalog.init('catalog', basket);
 basket.init('basket', 'basket_btn');
 
-// generate() {
+// ДОБАВИТЬ ПОДСЧЕТ КОРЗИНЫ
+// generatePrice() {
 //     if (this.goods.length > 0) {
 //         this.goods.forEach(product => {
 //             this.basketProduct.insertAdjacentHTML('beforeend', this.cart.generate(product));
