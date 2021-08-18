@@ -68,7 +68,7 @@ const catalog = {
 
     addBasket(event) {
         if (!event.target.classList.contains('product_btn')) return;
-        const idProduct = +event.target.dataset.idProduct;
+        const idProduct = +event.target.dataset.idproduct;
         const addProduct = this.list.find((product) => product.idProduct === idProduct);
         this.basket.addBasket(addProduct);
     },
@@ -89,14 +89,7 @@ const catalog = {
 const basket = {
     basketBlock: null,
     basketButton: null,
-    goods: [
-        // {
-        //     idProduct: 111,
-        //     productName: "Платье",
-        //     price: 2000,
-        //     amount: 1
-        // },
-    ],
+    goods: [],
 
 
     init(basketBlockClass, basketButton) {
@@ -106,7 +99,7 @@ const basket = {
         this.addEvent();
         this.generate();
 
-        //generatePrice();
+        this.generatePrice();
     },
 
     addEvent() { //Событие на кнопке
@@ -152,6 +145,7 @@ const basket = {
             const findInBasket = this.goods.find((item) => product.idProduct === item.idProduct);
             if (findInBasket) {
                 findInBasket.amount++;
+
             } else {
                 this.goods.push({...product, amount: 1});
             }
@@ -161,24 +155,25 @@ const basket = {
             alert('Ошибка добавления!');
         }
     },
+
+    generatePrice() {
+        if (this.goods.length > 0) {
+            this.goods.forEach(product => {
+                this.basketBlock.insertAdjacentHTML('beforeend', this.cart.generate(product));
+            });
+            this.basketBlock.insertAdjacentHTML('beforeend', `В корзине ${this.goods.length} товаров на сумму ${this.basketPrice()}`);
+        } else {
+            this.basketBlock.textContent = 'Корзина пуста';
+        }
+    },
+    
+    basketPrice() {
+        return this.goods.reduce(function(sum, current) {
+                return sum + current.price * current.amount;
+              }, 0);
+    },
 };
 catalog.init('catalog', basket);
 basket.init('basket', 'basket_btn');
 
-// ДОБАВИТЬ ПОДСЧЕТ КОРЗИНЫ
-// generatePrice() {
-//     if (this.goods.length > 0) {
-//         this.goods.forEach(product => {
-//             this.basketProduct.insertAdjacentHTML('beforeend', this.cart.generate(product));
-//         });
-//         this.basketProduct.insertAdjacentHTML('beforeend', `В корзине ${this.goods.length} товаров на сумму ${this.basketPrice()}`);
-//     } else {
-//         this.basketProduct.textContent = 'Корзина пуста';
-//     }
-// },
 
-// basketPrice() {
-//     return this.goods.reduce(function(sum, current) {
-//             return sum + current.price * current.amount;
-//           }, 0);
-// },
