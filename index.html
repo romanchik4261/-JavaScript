@@ -6,15 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        #game td {
-            width: 30px;
-            height: 30px;
-            border: 1px solid black;
+        .basket {
+            font-size: 25px;
         }
+
+        .basket_btn {
+            font-size: 25px;
+        }
+
+        .product {
+            border: 1px solid black;
+            width: 400px;
+            display: flex;
+            justify-content: center;
+            padding-left: 20px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            padding-right: 15px;
+        }
+        
     </style>
 </head>
 <body>
-    <table id="game"></table>
+    <h2>Каталог</h2>
+    <div class="catalog"></div>
+    <hr>
+    <h2>Корзина</h2>
     <div class="basket"></div>
     <button class="basket_btn">Очистить корзину</button>
     <script src="script.js"></script>

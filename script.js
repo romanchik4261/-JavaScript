@@ -1,245 +1,184 @@
-
 'use strict'
 
-// 1 задание
-// Первый вариант
-// const board = {
-    
-//     containerElement: document.getElementById('game'),
-//     cellElement: [],
-
-//     initCells() {
-//         this.containerElement.innerHTML = ' ';
-//         this.cellElement = [];
-
-//         const rowCount = [0, 8, 7, 6, 5, 4, 3, 2, 1, 0];
-//         const colCount = [0,'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',0];
-    
-//         for (let row = 0; row < rowCount.length; row++) {
-//             const tr = document.createElement('tr');
-//             this.containerElement.appendChild(tr);
-
-//             for (let col = 0; col < colCount.length; col++) {
-//                 const td = document.createElement('td');
-//                 tr.appendChild(td);
-
-//                 this.cellElement.push(td);
-
-//             if (rowCount[row] === 0 && colCount[col] !== 0) {
-//                 td.innerHTML = colCount[col];
-//             } else if (colCount[col] === 0 && rowCount[row] !== 0) {
-//                 td.innerHTML = rowCount[row].toString();
-//             }
-//             if (this.cellBlack(row, col)) {
-//                 td.style.background = 'grey';
-//             }
-
-//             }
-//         }
-//     },
-
-//     cellBlack(rowNum, colNum) {
-//         if (rowNum === 0 || colNum === 0 || rowNum === 9 || colNum === 9) {
-//             return false;
-//         }
-//         return (rowNum % 2 === 1 && colNum % 2 === 0) || (rowNum % 2 === 0 && colNum % 2 === 1);
-//     },
-
-// };
-
-// board.initCells()
-
-// //2 задание
-
-const cart = {
-    generate(product) {
-        return `<div class = "good">
-        <div>Наименование: ${product.productName}</div>
-        <div>Цена: ${product.price}</div>
-        <div>Количество: ${product.amount}</div>
-        <div>Стоимость: ${product.price * product.amount}</div>
-        </div>`
-    }
-}
-
-
-const basket = {
-    basketProduct: null,
-    basketButton: null,
-    cart,
-
-    goods: [
+const catalog = {
+    catalogBlock: null,
+    basket: null,
+    list: [
         {
             idProduct: 111,
             productName: "Платье",
             price: 2000,
-            amount: 2
         },
         {
             idProduct: 222,
             productName: "Юбка",
             price: 1500,
-            amount: 2
-        },
-        {
-            idProduct: 333,
-            productName: "Футболка",
-            price: 500,
-            amount: 2
         },
         {
             idProduct: 444,
             productName: "Штаны",
             price: 2000,
-            amount: 2
         },
         {
             idProduct: 555,
             productName: "Жакет",
             price: 1500,
-            amount: 2
         }
     ],
 
-
-    init() {
-        this.basketProduct = document.querySelector('.basket');
-        this.basketButton = document.querySelector('.basket_btn');
-        this.basketButton.addEventListener('click', () => this.clearbasket);
-        //Событие очищения корзины
-
+    //Инициализация каталога
+    init(catalogBlockClass, basket) {
+        this.catalogBlock = document.querySelector (`.${catalogBlockClass}`);
+        this.basket = basket;
         this.generate();
+        this.addEvent();
     },
 
-    clearbasket() { //Очищение
+    generate() { //Генерируем каталог
+        if (this.list.length > 0) {
+            this.generateCatalog();
+        } else {
+            this.clearCatalog();
+        }
+    },
+
+    generateCatalog() { //Генерируем список товаров
+        this.catalogBlock.innerHTML = '';
+        this.list.forEach(item => {
+            this.catalogBlock.insertAdjacentHTML('beforeend', this.generateCatalogItem(item));
+        });
+    },
+    
+    generateCatalogItem(item) { //Генерируем товар каталога
+        return `<div class = "product">
+        <h3>Наименование: ${item.productName}</h3>
+        <p>Цена: ${item.price} руб.</p>
+        <button class="product_btn" data-idProduct="${item.idProduct}">Добавить в корзину</button>
+        </div>`;
+    },
+
+    clearCatalog() {
+        this.catalogBlock.innerHTML = '';
+        this.catalogBlock.textContent = 'Каталог товаров пуст.';
+    },
+
+    addEvent() {
+        this.catalogBlock.addEventListener('click', event => this.addBasket(event));
+    },
+
+    addBasket(event) {
+        if (!event.target.classList.contains('product_btn')) return;
+        const idProduct = +event.target.dataset.idProduct;
+        const addProduct = this.list.find((product) => product.idProduct === idProduct);
+        this.basket.addBasket(addProduct);
+    },
+};
+
+// const cart = {
+//     generate(product) {
+//         return `<div class = "good">
+//         <div>Наименование: ${product.productName}</div>
+//         <div>Цена: ${product.price}</div>
+//         <div>Количество: ${product.amount}</div>
+//         <div>Стоимость: ${product.price * product.amount}</div>
+//         </div>`
+//     }
+// }
+
+
+const basket = {
+    basketBlock: null,
+    basketButton: null,
+    goods: [
+        // {
+        //     idProduct: 111,
+        //     productName: "Платье",
+        //     price: 2000,
+        //     amount: 1
+        // },
+    ],
+
+
+    init(basketBlockClass, basketButton) {
+        this.basketBlock = document.querySelector(`.${basketBlockClass}`);
+        this.basketButton = document.querySelector(`.${basketButton}`);
+
+        this.addEvent();
+        this.generate();
+
+        //generatePrice();
+    },
+
+    addEvent() { //Событие на кнопке
+        this.basketButton.addEventListener('click', this.clearbasket.bind(this));
+    },
+
+    clearbasket() { //Очищение корзины
         this.goods = [];
         this.generate();
     },
 
-    generate() {
-        if (this.goods.length) {
-            this.goods.forEach(product => {
-                this.basketProduct.insertAdjacentHTML('beforeend', this.cart.generate(product));
-            });
-            this.basketProduct.insertAdjacentHTML('beforeend', `В корзине ${this.goods.length} товаров на сумму ${this.basketPrice()}`);
+    generate() { //Генерируется корзина
+        if (this.goods.length > 0) {
+            this.generateBasket();
         } else {
-            this.basketProduct.textContent = 'Корзина пуста';
+            this.generateClearBasket();
         }
     },
 
-    basketPrice() {
-        return this.goods.reduce(function(sum, current) {
-                return sum + current.price * current.amount;
-              }, 0);
+    generateBasket() { //Генерируется список товаров
+        this.basketBlock.innerHTML = '';
+        this.goods.forEach(item => {
+            this.basketBlock.insertAdjacentHTML('beforeend', this.generateProductBasket(item));
+        });
     },
 
-};
-basket.init();
-
-
-
-
-
-// let count = basket.goods.length;
-// alert("В корзине " + count + " товаров " + " на сумму " +  basket.basketPrice());
-
-
-=======
-"use strict";
-//1 задание
-
-function numToObject() {
-    
-    const num = parseInt(prompt("Введите число от 0 до 999"));
-    if (num >= 1000 || num < 0 || !Number.isInteger(num)) {
-        console.log("Значение должно быть числом больше 0 и не больше 999. Попробуй ещё раз.");
-        return {};
-    } 
-    
-    return {
-        units: parseInt(num % 10),
-        dozens: parseInt((num % 100)/10),
-        hundreds: parseInt((num % 1000)/100)
-    }
-}
-
-console.log(numToObject());
-
-//2 задание
-
-const basket = {
-
-    goods: [
-        {
-            idProduct: 111,
-            productName: "Платье",
-            price: 2000,
-            amount: 2
-        },
-        {
-            idProduct: 222,
-            productName: "Юбка",
-            price: 1500,
-            amount: 2
-        },
-        {
-            idProduct: 333,
-            productName: "Футболка",
-            price: 500,
-            amount: 2
-        },
-        {
-            idProduct: 444,
-            productName: "Штаны",
-            price: 2000,
-            amount: 2
-        },
-        {
-            idProduct: 555,
-            productName: "Жакет",
-            price: 1500,
-            amount: 2
-        }
-    ],
-
-    basketPrice() {
-        return this.goods.reduce(function(sum, current) {
-                return sum + current.price * current.amount;
-              }, 0);
+    generateProductBasket(item) { //Генерируется товар
+        return `<div>
+                    <h3>Наименование: ${item.productName}</h3>
+                    <p>Цена: ${item.price} руб.</p>
+                    <p>Количество: ${item.amount} шт.</p>
+                </div>`;
     },
 
-};
+    generateClearBasket() {
+        this.basketBlock.innerHTML = '';
+        this.basketBlock.textContent = 'Корзина пуста.';
+    },
 
-let count = basket.goods.length;
-
-alert("В корзине " + count + " товаров " + " на сумму " +  basket.basketPrice());
-
-//3 задание
-
-const catalog = {
-    
-    men: [
-            {clothes: {"Джинсы": {
-                    price: 2000,
-                    idProduct: 111,
-                    color: ['белый','черный','синий']
-                    },
-                    "Футболка": {},
-                    "Куртка": {}
-                    }
-            },
-            {shoes: {}
-            },
-            {accesories: {}
+    //Добавляем товар в корзину
+    addBasket(product) {
+        if (product) {
+            const findInBasket = this.goods.find((item) => product.idProduct === item.idProduct);
+            if (findInBasket) {
+                findInBasket.amount++;
+            } else {
+                this.goods.push({...product, amount: 1});
             }
-        ],
+            this.generate();
+        } 
+        else {
+            alert('Ошибка добавления!');
+        }
+    },
+};
+catalog.init('catalog', basket);
+basket.init('basket', 'basket_btn');
 
-    women: [
-        {clothes: {}
-    },
-        {shoes: {}
-    },
-        {accesories: {}
-    }
-],
-}
+// ДОБАВИТЬ ПОДСЧЕТ КОРЗИНЫ
+// generatePrice() {
+//     if (this.goods.length > 0) {
+//         this.goods.forEach(product => {
+//             this.basketProduct.insertAdjacentHTML('beforeend', this.cart.generate(product));
+//         });
+//         this.basketProduct.insertAdjacentHTML('beforeend', `В корзине ${this.goods.length} товаров на сумму ${this.basketPrice()}`);
+//     } else {
+//         this.basketProduct.textContent = 'Корзина пуста';
+//     }
+// },
+
+// basketPrice() {
+//     return this.goods.reduce(function(sum, current) {
+//             return sum + current.price * current.amount;
+//           }, 0);
+// },
