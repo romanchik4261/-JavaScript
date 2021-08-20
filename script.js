@@ -159,7 +159,7 @@ const basket = {
     generatePrice() {
         if (this.goods.length > 0) {
             this.goods.forEach(product => {
-                this.basketBlock.insertAdjacentHTML('beforeend', this.cart.generate(product));
+                this.basketBlock.insertAdjacentHTML('beforeend', this.goods.generate(product));
             });
             this.basketBlock.insertAdjacentHTML('beforeend', `В корзине ${this.goods.length} товаров на сумму ${this.basketPrice()}`);
         } else {
@@ -174,6 +174,7 @@ const basket = {
     },
 };
 catalog.init('catalog', basket);
+
 basket.init('basket', 'basket_btn');
 
 
