@@ -1,413 +1,184 @@
-"use strict";
-const settings = {
-  rowsCount: 21,
-  colsCount: 21,
-  speed: 2,
-  winFoodCount: 50,
-};
+'use strict'
 
-const config = {
-  settings,
+const catalog = {
+    catalogBlock: null,
+    basket: null,
+    list: [
+        {
+            idProduct: 111,
+            productName: "Платье",
+            price: 2000,
+        },
+        {
+            idProduct: 222,
+            productName: "Юбка",
+            price: 1500,
+        },
+        {
+            idProduct: 444,
+            productName: "Штаны",
+            price: 2000,
+        },
+        {
+            idProduct: 555,
+            productName: "Жакет",
+            price: 1500,
+        }
+    ],
 
-  init(userSettings) {
-    Object.assign(this.settings, userSettings);
-  },
-
-  getRowsCount() {
-    return this.settings.rowsCount;
-  },
-
-  getColsCount() {
-    return this.settings.colsCount;
-  },
-
-  getSpeed() {
-    return this.settings.speed;
-  },
-
-  getWinFoodCount() {
-    return this.settings.winFoodCount;
-  },
-
-  validate() {
-    const result = {
-      isValid: true,
-      errors: [],
-    };
-
-    if (this.getRowsCount() < 10 || this.getRowsCount() > 30) {
-      result.isValid = false;
-      result.errors.push('Неверные настройки, значение rowsCount должно быть в диапазоне [10, 30].');
-    }
-
-    if (this.getColsCount() < 10 || this.getColsCount() > 30) {
-      result.isValid = false;
-      result.errors.push('Неверные настройки, значение colsCount должно быть в диапазоне [10, 30].');
-    }
-
-    if (this.getSpeed() < 1 || this.getSpeed() > 10) {
-      result.isValid = false;
-      result.errors.push('Неверные настройки, значение speed должно быть в диапазоне [1, 10].');
-    }
-
-    if (this.getWinFoodCount() < 5 || this.getWinFoodCount() > 50) {
-      result.isValid = false;
-      result.errors.push('Неверные настройки, значение winFoodCount должно быть в диапазоне [5, 50].');
-    }
-
-    return result;
-  },
-};
-
-const map = {
-  cells: {},
-  usedCells: [],
-
-  init(rowsCount, colsCount) {
-    const table = document.getElementById('game');
-    table.innerHTML = '';
-
-    this.cells = {};
-    this.usedCells = [];
-
-    for (let row = 0; row < rowsCount; row++) {
-      const tr = document.createElement('tr');
-      tr.classList.add('row');
-      table.appendChild(tr);
-
-      for (let col = 0; col < colsCount; col++) {
-        const td = document.createElement('td');
-        td.classList.add('cell');
-        tr.appendChild(td);
-
-        this.cells[`x${col}_y${row}`] = td;
-      }
-    }
-  },
-
-  render(snakePointsArray, foodPoint) {
-    for (const cell of this.usedCells) {
-      cell.className = 'cell';
-    }
-
-    this.usedCells = [];
-
-    snakePointsArray.forEach((point, index) => {
-      const snakeCell = this.cells[`x${point.x}_y${point.y}`];
-      snakeCell.classList.add(index === 0 ? 'snakeHead' : 'snakeBody');
-      this.usedCells.push(snakeCell);
-    });
-
-    const foodCell = this.cells[`x${foodPoint.x}_y${foodPoint.y}`];
-    foodCell.classList.add('food');
-    this.usedCells.push(foodCell);
-  },
-};
-
-const snake = {
-  body: [],
-  direction: null,
-  lastStepDirection: null,
-
-  init(startBody, direction) {
-    this.body = startBody;
-    this.direction = direction;
-    this.lastStepDirection = direction;
-  },
-
-  getBody() {
-    return this.body;
-  },
-
-  getLastStepDirection() {
-    return this.lastStepDirection;
-  },
-
-  setDirection(direction) {
-    this.direction = direction;
-  },
-
-  isOnPoint(point) {
-    return this.getBody().some((snakePoint) => {
-      return snakePoint.x === point.x && snakePoint.y === point.y;
-    });
-  },
-
-  makeStep() {
-    this.lastStepDirection = this.direction;
-    this.getBody().unshift(this.getNextStepHeadPoint());
-    this.getBody().pop();
-  },
-
-  growUp() {
-    const lastBodyIdx = this.getBody().length - 1;
-    const lastBodyPoint = this.getBody()[lastBodyIdx];
-    const lastBodyPointClone = Object.assign({}, lastBodyPoint);
-
-    this.getBody().push(lastBodyPointClone);
-  },
-
-  getNextStepHeadPoint() {
-    const firstPoint = this.getBody()[0];
-    switch(this.direction) {
-      case 'up':
-        return {x: firstPoint.x, y: firstPoint.y - 1};
-      case 'right':
-        return {x: firstPoint.x + 1, y: firstPoint.y};
-      case 'down':
-        return {x: firstPoint.x, y: firstPoint.y + 1};
-      case 'left':
-        return {x: firstPoint.x - 1, y: firstPoint.y};
-    }
-  },
-};
-
-const food = {
-  x: null,
-  y: null,
-
-  getCoordinates() {
-    return {
-      x: this.x,
-      y: this.y,
-    };
-  },
-
-  setCoordinates(point) {
-    this.x = point.x;
-    this.y = point.y;
-  },
-
-  isOnPoint(point) {
-    return this.x === point.x && this.y === point.y;
-  },
-};
-
-const status = {
-  condition: null,
-
-  setPlaying() {
-    this.condition = 'playing';
-  },
-
-  setStopped() {
-    this.condition = 'stopped';
-  },
-
-  setFinished() {
-    this.condition = 'finished';
-  },
-
-  isPlaying() {
-    return this.condition === 'playing';
-  },
-
-  isStopped() {
-    return this.condition === 'stopped';
-  },
-};
-
-// домашка
-
-const register = {
-    count: null,
-    registerCounts: null,
-
-    init() {
-        this.registerCounts = document.getElementById('register');
-        this.drop();
+    //Инициализация каталога
+    init(catalogBlockClass, basket) {
+        this.catalogBlock = document.querySelector (`.${catalogBlockClass}`);
+        this.basket = basket;
+        this.generate();
+        this.addEvent();
     },
 
-    drop() { //обнуляем счетчик
-        this.count = 0;
-        this.points();
+    generate() { //Генерируем каталог
+        if (this.list.length > 0) {
+            this.generateCatalog();
+        } else {
+            this.clearCatalog();
+        }
     },
 
-    points() { //количество очков
-        this.registerCounts.textContent = this.count;
+    generateCatalog() { //Генерируем список товаров
+        this.catalogBlock.innerHTML = '';
+        this.list.forEach(item => {
+            this.catalogBlock.insertAdjacentHTML('beforeend', this.generateCatalogItem(item));
+        });
+    },
+    
+    generateCatalogItem(item) { //Генерируем товар каталога
+        return `<div class = "product">
+        <h3>Наименование: ${item.productName}</h3>
+        <p>Цена: ${item.price} руб.</p>
+        <button class="product_btn" data-idProduct="${item.idProduct}">Добавить в корзину</button>
+        </div>`;
     },
 
-    increment() {
-        this.count++;
-        this.points();
+    clearCatalog() {
+        this.catalogBlock.innerHTML = '';
+        this.catalogBlock.textContent = 'Каталог товаров пуст.';
+    },
+
+    addEvent() {
+        this.catalogBlock.addEventListener('click', event => this.addBasket(event));
+    },
+
+    addBasket(event) {
+        if (!event.target.classList.contains('product_btn')) return;
+        const idProduct = +event.target.dataset.idProduct;
+        const addProduct = this.list.find((product) => product.idProduct === idProduct);
+        this.basket.addBasket(addProduct);
     },
 };
 
-const game = {
-  config,
-  map,
-  snake,
-  food,
-  status,
-  register,
-  tickInterval: null,
+// const cart = {
+//     generate(product) {
+//         return `<div class = "good">
+//         <div>Наименование: ${product.productName}</div>
+//         <div>Цена: ${product.price}</div>
+//         <div>Количество: ${product.amount}</div>
+//         <div>Стоимость: ${product.price * product.amount}</div>
+//         </div>`
+//     }
+// }
 
-  init(userSettings = {}) {
-    this.config.init(userSettings);
-    const validation = this.config.validate();
 
-    if (!validation.isValid) {
-      for (const err of validation.errors) {
-        console.error(err);
-      }
-      return;
-    }
+const basket = {
+    basketBlock: null,
+    basketButton: null,
+    goods: [
+        // {
+        //     idProduct: 111,
+        //     productName: "Платье",
+        //     price: 2000,
+        //     amount: 1
+        // },
+    ],
 
-    this.map.init(this.config.getRowsCount(), this.config.getColsCount());
-    this.register.init();
-    this.setEventHandlers();
-    this.reset();
-  },
 
-  setEventHandlers() {
-    document.getElementById('playButton').addEventListener('click', () => {
-      this.playClickHandler();
-    });
-    document.getElementById('newGameButton').addEventListener('click', () => {
-      this.newGameClickHandler();
-    });
-    document.addEventListener('keydown', (event) => this.keyDownHandler(event));
-  },
+    init(basketBlockClass, basketButton) {
+        this.basketBlock = document.querySelector(`.${basketBlockClass}`);
+        this.basketButton = document.querySelector(`.${basketButton}`);
 
-  playClickHandler() {
-    if (this.status.isPlaying()) this.stop();
-    else if (this.status.isStopped()) this.play();
-  },
+        this.addEvent();
+        this.generate();
 
-  newGameClickHandler() {
-    this.reset();
-  },
+        //generatePrice();
+    },
 
-  keyDownHandler(event) {
-    if (!this.status.isPlaying()) return;
+    addEvent() { //Событие на кнопке
+        this.basketButton.addEventListener('click', this.clearbasket.bind(this));
+    },
 
-    const direction = this.getDirectionByCode(event.code);
+    clearbasket() { //Очищение корзины
+        this.goods = [];
+        this.generate();
+    },
 
-    if (this.canSetDirection(direction)) this.snake.setDirection(direction);
-  },
+    generate() { //Генерируется корзина
+        if (this.goods.length > 0) {
+            this.generateBasket();
+        } else {
+            this.generateClearBasket();
+        }
+    },
 
-  getDirectionByCode(code) {
-    switch (code) {
-      case 'KeyW':
-      case 'ArrowUp':
-        return 'up';
-      case 'KeyD':
-      case 'ArrowRight':
-        return 'right';
-      case 'KeyS':
-      case 'ArrowDown':
-        return 'down';
-      case 'KeyA':
-      case 'ArrowLeft':
-        return 'left';
-    }
-  },
+    generateBasket() { //Генерируется список товаров
+        this.basketBlock.innerHTML = '';
+        this.goods.forEach(item => {
+            this.basketBlock.insertAdjacentHTML('beforeend', this.generateProductBasket(item));
+        });
+    },
 
-  canSetDirection(direction) {
-    const lastStepDirection = this.snake.getLastStepDirection();
+    generateProductBasket(item) { //Генерируется товар
+        return `<div>
+                    <h3>Наименование: ${item.productName}</h3>
+                    <p>Цена: ${item.price} руб.</p>
+                    <p>Количество: ${item.amount} шт.</p>
+                </div>`;
+    },
 
-    return direction === 'up' && lastStepDirection !== 'down' ||
-        direction === 'right' && lastStepDirection !== 'left' ||
-        direction === 'down' && lastStepDirection !== 'up' ||
-        direction === 'left' && lastStepDirection !== 'right';
-  },
+    generateClearBasket() {
+        this.basketBlock.innerHTML = '';
+        this.basketBlock.textContent = 'Корзина пуста.';
+    },
 
-  reset() {
-    this.stop();
-    this.register.drop();
-    this.snake.init(this.getStartSnakeBody(), 'up');
-    this.food.setCoordinates(this.getRandomFreeCoordinates());
-    this.render()
-  },
-
-  getStartSnakeBody() {
-    return [
-      {
-        x: Math.floor(this.config.getColsCount() / 2),
-        y: Math.floor(this.config.getRowsCount() / 2),
-      }
-    ];
-  },
-
-  getRandomFreeCoordinates() {
-    const exclude = [this.food.getCoordinates(), ...this.snake.getBody()];
-
-    while (true) {
-      const rndPoint = {
-        x: Math.floor(Math.random() * this.config.getColsCount()),
-        y: Math.floor(Math.random() * this.config.getRowsCount()),
-      }
-
-      if (!exclude.some((exPoint) => exPoint.x === rndPoint.x && exPoint.y === rndPoint.y)) return rndPoint;
-    }
-  },
-
-  play() {
-    this.status.setPlaying();
-    this.tickInterval = setInterval(() => {
-      this.tickHandler();
-    }, 1000 / this.config.getSpeed());
-    this.setPlayButton('Стоп');
-  },
-
-  stop() {
-    this.status.setStopped();
-    clearInterval(this.tickInterval);
-    this.setPlayButton('Старт');
-  },
-
-  finish() {
-    this.status.setFinished();
-    clearInterval(this.tickInterval);
-    this.setPlayButton('Игра закончена', true);
-  },
-
-  tickHandler() {
-    if (!this.canMakeStep()) return this.finish();
-    if (this.food.isOnPoint(this.snake.getNextStepHeadPoint())) {
-      this.snake.growUp();
-      this.register.increment();
-      this.food.setCoordinates(this.getRandomFreeCoordinates());
-
-      if (this.isGameWon()) this.finish();
-    }
-
-    this.snake.makeStep();
-    this.render();
-  },
-
-  canMakeStep() {
-    const nextHeadPoint = this.snake.getNextStepHeadPoint();
-    return !this.snake.isOnPoint(nextHeadPoint) &&
-        nextHeadPoint.x < this.config.getColsCount() &&
-        nextHeadPoint.y < this.config.getRowsCount() &&
-        nextHeadPoint.x >= 0 &&
-        nextHeadPoint.y >= 0;
-  },
-
-  isGameWon() {
-    return this.snake.getBody().length > this.config.getWinFoodCount();
-  },
-
-  setPlayButton(text, isDisabled = false) {
-    const playButton = document.getElementById('playButton');
-
-    playButton.textContent = text;
-
-    isDisabled
-        ? playButton.classList.add('disabled')
-        : playButton.classList.remove('disabled');
-  },
-
-  render() {
-    this.map.render(this.snake.getBody(), this.food.getCoordinates());
-  },
-  
+    //Добавляем товар в корзину
+    addBasket(product) {
+        if (product) {
+            const findInBasket = this.goods.find((item) => product.idProduct === item.idProduct);
+            if (findInBasket) {
+                findInBasket.amount++;
+            } else {
+                this.goods.push({...product, amount: 1});
+            }
+            this.generate();
+        } 
+        else {
+            alert('Ошибка добавления!');
+        }
+    },
 };
+catalog.init('catalog', basket);
+basket.init('basket', 'basket_btn');
 
+// ДОБАВИТЬ ПОДСЧЕТ КОРЗИНЫ
+// generatePrice() {
+//     if (this.goods.length > 0) {
+//         this.goods.forEach(product => {
+//             this.basketProduct.insertAdjacentHTML('beforeend', this.cart.generate(product));
+//         });
+//         this.basketProduct.insertAdjacentHTML('beforeend', `В корзине ${this.goods.length} товаров на сумму ${this.basketPrice()}`);
+//     } else {
+//         this.basketProduct.textContent = 'Корзина пуста';
+//     }
+// },
 
-
-game.init();
-
-// Для генерации препятствий использовать getRandomFreeCoordinates()  нужно его расширить. Метод генерирующий рандомную свободную точку с координатами. Добавить в исключения координаты препятствий
-// Объект food на основе которого можно создать обект препятствия
+// basketPrice() {
+//     return this.goods.reduce(function(sum, current) {
+//             return sum + current.price * current.amount;
+//           }, 0);
+// },
